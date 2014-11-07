@@ -4,8 +4,8 @@
 	"keywords": ["framework", "laravel"],
 	"license": "MIT",
 	"require": {
-		"laravel/framework": "4.2.*",
-		"yohang/finite": "1.1.*@dev",
+		"laravel/framework": "4.2.11",
+		"yohang/finite": "1.0.3",
 		"nesbot/carbon": "1.10.0"
 	},
 	"require-dev": {
