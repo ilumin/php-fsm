@@ -51,7 +51,7 @@ class OrderFsmTest extends TestCase
             $this->machine->apply('BuyerClickRefund');
         }
         catch(StateException $e) {
-            $this->assertSame('The "BuyerClickRefund" transition can not be applied to the "Paid" state of object "OrderFsm" with graph "".', $e->getMessage());
+            $this->assertSame('The "BuyerClickRefund" transition can not be applied to the "Paid" state.', $e->getMessage());
             $currentState = $this->machine->getCurrentState();
             $this->assertSame('Paid', $currentState->getName());
             return;
@@ -73,6 +73,8 @@ class OrderFsmTest extends TestCase
 
         $this->machine = $this->order->getStateMachine();
         $this->machine->apply('BuyerPaySuccess');
+        $this->assertSame('Paid', $this->machine->getCurrentState()->getName());
         $this->machine->apply('BuyerClickRefund');
+        $this->assertSame('RefundRequested', $this->machine->getCurrentState()->getName());
     }
 }
