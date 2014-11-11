@@ -19,7 +19,12 @@ class OrderFsm implements StatefulInterface
         $orderGuard = App::make('OrderFsmGuard', array(
             $this
         ));
-        $methodVariable = array(
+
+        // http://php.net/manual/en/language.types.callable.php
+        // Type 3: Object method call
+        // $obj = new MyClass();
+        // call_user_func(array($obj, 'myCallbackMethod'));
+        $callbacks = array(
             $orderGuard,
             'canRefund'
         );
@@ -50,8 +55,8 @@ class OrderFsm implements StatefulInterface
         $this->machine->addTransition(new Transition('BuyerPayFail', 'PlacedOrder', 'Incompleted', null));
         $this->machine->addTransition(new Transition('BuyerPaySuccess', 'PlacedOrder', 'Paid', null));
         $this->machine->addTransition(new Transition('SellerClickShip', 'Paid', 'Shipped', null));
-        $this->machine->addTransition(new Transition('BuyerClickRefund', 'Paid', 'RefundRequested', $methodVariable));
-        $this->machine->addTransition(new Transition('BuyerClickRefund', 'Shipped', 'RefundRequested', $methodVariable));
+        $this->machine->addTransition(new Transition('BuyerClickRefund', 'Paid', 'RefundRequested', $callbacks));
+        $this->machine->addTransition(new Transition('BuyerClickRefund', 'Shipped', 'RefundRequested', $callbacks));
 
         $this->machine->setObject($this);
         $this->machine->initialize();
