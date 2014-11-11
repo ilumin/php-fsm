@@ -94,6 +94,22 @@ textarea {
     font-family: arundinamono;
 }
  */
+
+.label_state {
+	text-align: left !important;
+	padding-top: 5px;
+	width: 100px !important;
+}
+.input_state {
+	margin-left: 100px !important;
+	width: 200px !important;
+	height: 34px;
+}
+.state_button {
+	position: relative;
+	top: -34px;
+	left: 220px;
+}
 .input-number{
 	text-align:right;
 }

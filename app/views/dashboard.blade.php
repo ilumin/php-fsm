@@ -20,6 +20,8 @@
 
     <link rel="stylesheet" href="{{{ asset('css/bootstrap.min.css') }}}">
     <link rel="stylesheet" href="{{{ asset('css/normalize.css') }}}">
+    <link rel="stylesheet" href="{{{ asset('css/alertify.core.css') }}}">
+    <link rel="stylesheet" href="{{{ asset('css/alertify.bootstrap.css') }}}">
     <link rel="stylesheet" href="{{{ asset('css/main.css') }}}">
     @yield('page-css')
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -38,9 +40,21 @@
         <div class="col-xs-12 col-md-8 col-md-offset-2">
             <h2>FSM Demo</h2>
                 <p>Order Date Time: {{ $order->orderDateTime->toDateTimeString() }}</p>
-                <p>Order Pay Date Time: @if(!empty($order->orderPayDateTime)){{ $order->orderPayDateTime->toDateTimeString() }}@endif</p>
-                <p>Order Pay Date Time2: {{ $machine->getCurrentState()->get('paidDate') }}</p>
+                <!-- <p>Order Pay Date Time: @if(!empty($order->orderPayDateTime)){{ $order->orderPayDateTime->toDateTimeString() }}@endif</p>
+                <p>Order Pay Date Time2: {{ $machine->getCurrentState()->get('paidDate') }}</p> -->
                 <p>Current State: {{ $machine->getCurrentState()->getName() }}</p>
+                <div class="row">
+                <div class="col-xs-12 col-md-8">
+                    <dl class="dl-horizontal">
+                    <dt class="label_state"><label for="init_state_name" class="">Initial State:</label></dt>
+                    <?php
+                        $states = Session::get('states');
+                     ?>
+                    <dd class="input_state">@include('partials.init-select')<button type="submit" class="btn btn-primary state_button" onclick="post_to_url('<?php echo URL::to('fsm/set-init-state') ?>', null, 'post');
+                    ">Set Initial State</button></dd>
+                    </dl>
+
+                </div></div>
                 @yield('content')
 
             @if(Session::has('error'))
@@ -48,7 +62,8 @@
                     {{ Session::get('error') }}
                 </div>
             @endif
-            <br><hr>
+
+            <hr>
             <button type="submit" class="btn btn-primary" onclick="post_to_url('<?php echo URL::to('fsm/dashboard') ?>', null, 'get');
             ">Reset</button>
 
@@ -61,10 +76,20 @@
             <button type="submit" class="btn btn-primary" onclick="post_to_url('<?php echo URL::to('fsm/buyer-click-refund') ?>', null, 'get');
             ">Buyer Refund</button>
             @endif
+            @if($machine->getCurrentState()->get('transferable'))
+            <button type="submit" class="btn btn-primary" onclick="post_to_url('<?php echo URL::to('fsm/welove-click-transfer') ?>', null, 'get');
+            ">Transfer</button>
+            @endif
+
+            <hr>
+                <p>============ Sessions ============</p>
+                <p>{{ s(Session::all()) }}</p>
+                <p>============ End Sessions ============</p>
+            <br>
             <br><hr>
             <div id="footer">
                 <div class="container">
-                    <p>© 2014 BridgeAsia</p>
+                    <p>© 2014 BridgeAsia Limited. All rights reserved.</p>
                 </div>
             </div>
         </div>
@@ -74,6 +99,7 @@
 <script src="{{{ asset('js/vendor/jquery-1.11.1.min.js') }}}"></script>
 <script src="{{{ asset('js/bootstrap.min.js') }}}"></script>
 <script src="{{{ asset('js/plugins.js') }}}"></script>
+<script src="{{{ asset('js/alertify.min.js') }}}"></script>
 <script src="{{{ asset('js/main.js') }}}"></script>
 <script>
 function post_to_url(path, params, method) {
@@ -86,7 +112,8 @@ function post_to_url(path, params, method) {
         hiddenField.setAttribute("name", '_token');
         hiddenField.setAttribute("value", {{ '"' . Session::getToken() . '"' }});
         form.appendChild(hiddenField);
-
+        var ele = document.getElementById("init_state_name");
+        form.appendChild(ele);
         for(var key in params) {
             if(params.hasOwnProperty(key)) {
                 var hiddenField = document.createElement("input");
